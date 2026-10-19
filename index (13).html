@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pergunta do dia</title>
+<meta name="description" content="Mande uma dúvida sobre fé, de forma anônima. Ela pode cair na roleta da Pergunta do dia.">
+<meta name="theme-color" content="#18141E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* Layout: uma coluna centrada no estilo do link da bio da Soph — fundo escuro,
+   cards inclinados com sombra deslocada lilás, selo dourado. Visual escuro fixo. */
+:root{
+  --bg:#18141E; --card:#231D2C; --ink:#F3EEFA; --muted:#B5ABC4;
+  --lilac:#B48FE0; --lilac-ink:#1B1424; --lilac-soft:#E6DCF4;
+  --gold:#D9AE57; --gold-ink:#2A1D08; --chip:#2A2333; --chip-line:#3D3449;
+  --serif:"Young Serif",Georgia,"Times New Roman",serif;
+  --sans:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:1.0625rem; line-height:1.5;
+  display:flex; flex-direction:column; align-items:center;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+main{width:100%; max-width:32rem; flex:1; display:flex; flex-direction:column; justify-content:center; padding-block:2.5rem 1.5rem; gap:1.75rem}
+.serif{font-family:var(--serif); font-weight:400}
+
+header{text-align:center; display:flex; flex-direction:column; align-items:center; gap:1rem}
+h1{font-size:clamp(2.5rem,10vw,3.6rem); line-height:1; margin:0; letter-spacing:-.01em; text-wrap:balance}
+h1 .bang{color:var(--lilac)}
+.chips{display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin:0; padding:0; list-style:none}
+.chips li{background:var(--chip); border:1px solid var(--chip-line); border-radius:999px; padding:.35rem .9rem; font-size:.9rem; font-weight:500}
+
+/* Cards com sombra deslocada */
+.card{
+  position:relative; border-radius:1.25rem;
+  border:2px solid var(--lilac-soft);
+  box-shadow:6px 7px 0 var(--lilac-soft);
+}
+.ask{
+  background:var(--lilac); color:var(--lilac-ink);
+  padding:1.25rem 1.3rem 1rem; transform:rotate(-1deg);
+  display:flex; flex-direction:column; gap:.75rem;
+  transition:transform .2s ease;
+}
+.ask:focus-within{transform:rotate(0deg)}
+.badge{
+  position:absolute; top:-.85rem; right:1.1rem; transform:rotate(4deg);
+  background:var(--gold); color:var(--gold-ink); border-radius:999px;
+  padding:.25rem .75rem; font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+}
+.ask-head{display:flex; align-items:center; gap:.9rem}
+.icon{
+  flex:none; width:3rem; height:3rem; border-radius:.8rem; display:grid; place-items:center;
+  background:var(--lilac-ink); color:var(--lilac); font-family:var(--serif); font-size:1.6rem; line-height:1;
+}
+.ask-head label{display:block; font-family:var(--serif); font-size:1.4rem; line-height:1.15}
+.ask-head small{display:block; font-size:.92rem; opacity:.8; margin-top:.15rem}
+textarea{
+  font-family:var(--sans); font-size:1.1rem; line-height:1.4; font-weight:500;
+  color:var(--lilac-ink); background:rgba(255,255,255,.28);
+  border:1.5px solid rgba(27,20,36,.25); border-radius:.9rem; outline:0; resize:none;
+  min-height:8rem; width:100%; padding:.8rem .9rem;
+}
+textarea:focus{border-color:var(--lilac-ink); background:rgba(255,255,255,.4)}
+.meta{display:flex; justify-content:flex-end; gap:1rem; font-size:.85rem; opacity:.8}
+.count{font-variant-numeric:tabular-nums}
+.count.near{font-weight:700; opacity:1}
+
+.send{
+  width:100%; font:inherit; cursor:pointer; text-align:left;
+  background:var(--card); color:var(--ink); padding:1.05rem 1.3rem;
+  transform:rotate(.6deg); display:flex; align-items:center; gap:.9rem;
+  transition:transform .15s ease, box-shadow .15s ease, opacity .2s ease;
+}
+.send .icon{background:#3A2F1A; color:var(--gold); font-size:1.3rem}
+.send .t{flex:1; min-width:0}
+.send .t strong{display:block; font-family:var(--serif); font-weight:400; font-size:1.35rem; line-height:1.15}
+.send .t span{display:block; color:var(--muted); font-size:.92rem}
+.send .arrow{font-size:1.4rem}
+.send:hover:not(:disabled){transform:rotate(0) translate(-2px,-2px); box-shadow:8px 9px 0 var(--lilac-soft)}
+.send:active:not(:disabled){transform:translate(4px,5px); box-shadow:2px 2px 0 var(--lilac-soft)}
+.send:disabled{opacity:.5; cursor:default}
+.send:focus-visible{outline:3px solid var(--gold); outline-offset:4px}
+.go{
+  align-self:center; width:min(100%,20rem); cursor:pointer;
+  font-family:var(--serif); font-size:1.35rem; line-height:1.1;
+  background:var(--gold); color:var(--gold-ink);
+  border:2px solid var(--lilac-soft); border-radius:999px; padding:.9rem 1.6rem;
+  box-shadow:5px 6px 0 var(--lilac-soft); transform:rotate(1.2deg);
+  display:flex; justify-content:center; align-items:center; gap:.6rem;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.go:hover{transform:rotate(0) translate(-2px,-2px); box-shadow:7px 8px 0 var(--lilac-soft)}
+.go:active{transform:translate(4px,5px); box-shadow:1px 1px 0 var(--lilac-soft)}
+.go:focus-visible{outline:3px solid var(--lilac); outline-offset:5px}
+
+/* Fundo: textura de papel granulado com brilho lilás suave */
+html{overflow-x:clip}
+.bg{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  background:
+    radial-gradient(40% 45% at 20% 15%, rgba(180,143,224,.38), transparent 70%),
+    radial-gradient(35% 40% at 85% 85%, rgba(142,79,209,.32), transparent 70%),
+    radial-gradient(45% 40% at 80% 20%, rgba(122,63,192,.30), transparent 70%),
+    radial-gradient(40% 45% at 15% 85%, rgba(110,80,210,.30), transparent 70%);
+  background-size:160% 160%;
+  animation:drift 14s ease-in-out infinite alternate;
+}
+@keyframes drift{
+  0%{background-position:0% 0%, 100% 100%, 100% 0%, 0% 100%}
+  50%{background-position:40% 30%, 60% 70%, 60% 40%, 30% 60%}
+  100%{background-position:100% 60%, 0% 30%, 20% 100%, 100% 20%}
+}
+.bg::before{content:""; position:absolute; inset:-50%; opacity:.28; mix-blend-mode:overlay;
+  animation:grain 1.2s steps(6) infinite;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+@keyframes grain{
+  0%{transform:translate(0,0)} 20%{transform:translate(-6%,4%)} 40%{transform:translate(5%,-7%)}
+  60%{transform:translate(-3%,8%)} 80%{transform:translate(7%,2%)} 100%{transform:translate(0,0)}
+}
+/* Só luzes: sem granulado nem pontinhos */
+.bg::before,.bg::after{content:none}
+/* Luzes soltas com formatos variados e caminhos aleatórios */
+.bg{animation:none; background-color:transparent}
+.lights{position:absolute; inset:0}
+.light{position:absolute; left:0; top:0; filter:blur(64px); will-change:transform;
+  transition-property:transform, border-radius, opacity;
+  transition-timing-function:cubic-bezier(.45,0,.55,1)}
+/* Luz embaixo da caixa */
+.ask-wrap{position:relative}
+.ask-wrap::before{content:""; position:absolute; left:4%; right:4%; bottom:-4rem; height:9rem; z-index:0;
+  background:radial-gradient(closest-side, rgba(200,165,240,.85), rgba(180,143,224,.35) 55%, transparent);
+  filter:blur(22px); animation:pulse 3.5s ease-in-out infinite alternate}
+@keyframes pulse{from{opacity:.65; transform:scaleX(.9)}to{opacity:1; transform:scaleX(1.05)}}
+.ask-wrap::after{content:""; position:absolute; inset:-30% -20%; z-index:0; pointer-events:none;
+  background:radial-gradient(closest-side, rgba(150,90,225,.75), rgba(122,63,192,.4) 50%, transparent);
+  filter:blur(30px); animation:pulse 4.5s ease-in-out infinite alternate-reverse}
+.ask{z-index:1}
+.go{position:relative; z-index:1}
+.bg::after{content:""; position:absolute; inset:0; opacity:.06;
+  background-image:radial-gradient(var(--lilac-soft) 1px, transparent 1.2px); background-size:22px 22px;}
+main,footer{position:relative; z-index:1}
+.error{color:var(--gold); font-size:.92rem; margin:0; min-height:1.4em; text-align:center}
+form{display:flex; flex-direction:column; gap:1.6rem}
+
+/* Tela de agradecimento */
+#done{display:flex; flex-direction:column; align-items:center; gap:1.4rem; text-align:center}
+.amen{font-size:clamp(2.8rem,11vw,4rem); line-height:1; margin:0}
+.amen .bang{color:var(--lilac)}
+.sent{background:var(--lilac); color:var(--lilac-ink); padding:1.2rem 1.3rem; width:100%; margin:0; transform:rotate(-1deg);
+  font-family:var(--serif); font-size:clamp(1.15rem,4.4vw,1.4rem); line-height:1.3; text-wrap:balance}
+#done p.note{color:var(--muted); margin:0; max-width:24rem}
+#done .send{max-width:24rem}
+#done:not([hidden]) .amen{animation:rise .5s cubic-bezier(.2,.8,.2,1.15)}
+@keyframes rise{from{transform:translateY(6px) scale(.97)}to{transform:none}}
+
+footer{color:var(--muted); font-size:.85rem; padding-block:1rem 1.5rem; text-align:center}
+.tag{display:inline-block; margin-left:.4rem; padding:.05rem .55rem; border:1px solid var(--chip-line); border-radius:999px; font-size:.75rem; letter-spacing:.04em; text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+[hidden]{display:none !important}
+.hp{position:absolute; left:-9999px; width:1px; height:1px; opacity:0}
+</style>
+</head>
+<body>
+
+<div class="bg" id="bg" aria-hidden="true"><div class="lights" id="lights"></div></div>
+<main>
+  <form id="form" novalidate>
+    <div class="ask-wrap"><div class="card ask">
+      <span class="badge">Anônimo</span>
+      <div class="ask-head">
+        <span class="icon" aria-hidden="true">?</span>
+        <div>
+          <label for="q">Sua pergunta</label>
+          <small>Mande uma dúvida sobre fé. Ela pode cair na roleta.</small>
+        </div>
+      </div>
+      <textarea id="q" name="pergunta" maxlength="280" rows="4"></textarea>
+      <input class="hp" type="text" id="site" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="meta">
+        <span class="count" id="count">0/280</span>
+      </div>
+    </div></div>
+
+    <button class="go" id="send" type="submit">Enviar pergunta <span aria-hidden="true">→</span></button>
+    <p class="error" id="error" aria-live="polite"></p>
+  </form>
+
+  <section id="done" hidden aria-live="polite">
+    <h2 class="serif amen">Obrigada<span class="bang">!</span></h2>
+    <p class="card sent" id="sent-q"></p>
+    <p class="note">Sua pergunta foi enviada. Fique de olho: ela pode aparecer na próxima rodada.</p>
+    <button class="go" id="again" type="button">Enviar outra <span aria-hidden="true">→</span></button>
+  </section>
+</main>
+<footer>Feito para estudar e compartilhar a fé</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const q = $("q"), send = $("send"), count = $("count"), err = $("error");
+const MAX = 280;
+
+function update(){
+  const n = q.value.length;
+  count.textContent = n + "/" + MAX;
+  count.classList.toggle("near", n > MAX - 30);
+  err.textContent = "";
+}
+q.addEventListener("input", update);
+
+/* Endereço do Google Apps Script (Implantar > App da Web). Cole o seu aqui: */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxHCHq03gUSKfB3jKWC9CGGneDOeQ3EDtcnFwLX5JCWo1UNVk2NC9qvFaMjIwn5SpLCqQ/exec";
+
+const btnHTML = send.innerHTML;
+$("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const text = q.value.trim();
+  if(text.length < 5){ err.textContent = "Escreva sua pergunta antes de enviar."; q.focus(); return; }
+  send.disabled = true; send.textContent = "Enviando…"; err.textContent = "";
+  try{
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ pergunta: text, site: $("site").value })
+    });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.erro || "erro");
+    $("sent-q").textContent = text;
+    $("form").hidden = true;
+    $("done").hidden = false;
+  }catch(_){
+    err.textContent = "Não deu para enviar agora. Confira sua internet e tente de novo.";
+  }finally{
+    send.disabled = false; send.innerHTML = btnHTML;
+  }
+});
+
+$("again").addEventListener("click", () => {
+  q.value = ""; update();
+  $("done").hidden = true;
+  $("form").hidden = false;
+  q.focus();
+});
+
+update();
+
+/* Luzes do fundo */
+(() => {
+  const box = $("lights");
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const roxos = ["180,143,224", "142,79,209", "122,63,192", "91,42,134", "200,165,240", "110,60,200"];
+  const formas = [
+    { w: 50, h: 28, r: () => "50%" },
+    { w: 75, h: 10, r: () => "999px" },
+    { w: 34, h: 44, r: () => `${rnd(42,58)}% ${rnd(42,58)}% ${rnd(42,58)}% ${rnd(42,58)}% / ${rnd(42,58)}% ${rnd(42,58)}% ${rnd(42,58)}% ${rnd(42,58)}%` },
+    { w: 30, h: 30, r: () => "50%", anel: true },
+    { w: 46, h: 22, r: () => `${rnd(40,60)}% ${rnd(40,60)}% ${rnd(40,60)}% ${rnd(40,60)}%` },
+    { w: 14, h: 55, r: () => "999px" },
+    { w: 30, h: 30, r: () => `${rnd(42,58)}% ${rnd(42,58)}% ${rnd(42,58)}% ${rnd(42,58)}%` }
+  ];
+  function mover(el, f){
+    const dur = rnd(6, 12);
+    el.style.transitionDuration = dur + "s";
+    el.style.transform = `translate(calc(${rnd(55, 102)}vw - ${f.w / 2}vmax), calc(${rnd(0, 100)}vh - ${f.h / 2}vmax)) rotate(${rnd(-60, 60)}deg) scale(${rnd(.8, 1.3)}, ${rnd(.8, 1.3)})`;
+    el.style.borderRadius = f.r();
+    el.style.opacity = rnd(.45, .8);
+    if(!parado) setTimeout(() => mover(el, f), dur * 1000);
+  }
+  formas.forEach((f, i) => {
+    const el = document.createElement("div"); el.className = "light";
+    const c = roxos[i % roxos.length];
+    el.style.width = f.w + "vmax"; el.style.height = f.h + "vmax";
+    el.style.background = f.anel
+      ? `radial-gradient(closest-side, transparent 30%, rgba(${c},.6) 60%, transparent 95%)`
+      : `radial-gradient(closest-side, rgba(${c},.75), rgba(${c},.3) 55%, transparent)`;
+    el.style.transitionDuration = "0s";
+    box.appendChild(el);
+    el.style.transform = `translate(calc(${rnd(55, 102)}vw - ${f.w / 2}vmax), calc(${rnd(0, 100)}vh - ${f.h / 2}vmax))`;
+    el.style.borderRadius = f.r(); el.style.opacity = .6;
+    requestAnimationFrame(() => requestAnimationFrame(() => mover(el, f)));
+  });
+})();
+</script>
+</body>
+</html>
